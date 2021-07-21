@@ -35,6 +35,23 @@ const useStyles = makeStyles({
     lineHeight: "60px",
     fontWeight: "bolder",
   },
+  text4: {
+    width: "100px",
+    backgroundColor: "wheat",
+    textAlign: "center",
+    height: "60px",
+    lineHeight: "60px",
+    fontWeight: "bolder",
+  },
+  avg: {
+    width: "100px",
+    backgroundColor: "black",
+    color: "white",
+    textAlign: "center",
+    height: "60px",
+    lineHeight: "60px",
+    fontWeight: "bolder",
+  },
   var: {
     width: "100px",
     backgroundColor: "yellow",
@@ -59,6 +76,8 @@ function Home() {
     spread1: "",
     spread2: "",
     var1: "",
+    avg: "",
+    varianceArr: [],
   });
   //const [loading, setloading] = useState(false);
   //const [rerender, setrerender] = useState(false);
@@ -74,39 +93,32 @@ function Home() {
     axios.get(`${baseURL.url}/getdata?${query}`).then((res) => {
       if (res && res.data) {
         setdata(res.data);
-
-        const Data = res.data;
-        let long1 = "",
-          long2 = "",
-          short1 = "",
-          short2 = "",
-          spread1 = "",
-          spread2 = "",
-          var1 = "";
-        if (Data.result1.length > 0) {
-          long1 = Data.result1[0];
-          long2 = Data.result1[1];
-        }
-        if (Data.result2.length > 0) {
-          short1 = Data.result2[0];
-          short2 = Data.result2[1];
-        }
-        if (long1 && short1) {
-          spread1 = roundNumber(long1 / short1);
-        }
-        if (long2 && short2) {
-          spread2 = roundNumber(long2 / short2);
-        }
-        if (spread1 && spread2) {
-          var1 = roundNumber(100 * (spread2 - spread1));
-        }
-        setdata({ long1, long2, spread1, spread2, short1, short2, var1 });
+        const {
+          long1,
+          long2,
+          spread1,
+          spread2,
+          short1,
+          short2,
+          var1,
+          varianceArr,
+          avg,
+        } = res.data;
+        setdata({
+          long1,
+          long2,
+          spread1,
+          spread2,
+          short1,
+          short2,
+          var1,
+          varianceArr,
+          avg,
+        });
       }
     });
   };
-  const roundNumber = (numb) => {
-    return Math.round((numb + Number.EPSILON) * 100) / 100;
-  };
+
   return (
     <>
       <div className="w-full text-sm  p-5">
@@ -121,103 +133,169 @@ function Home() {
           </>
         ) : (
           <>
-            <div className="w-full my-3">
+            <div className="w-full my-3 overflow-x-auto ">
               <div className="my-3 w-full flex">
-                <Card
-                  className={`mx-2 ${styles.top}`}
-                  style={{
-                    width: 200,
-                  }}
-                >
-                  Companies
-                </Card>
-                <Card
-                  className={`mx-1 ${styles.top}`}
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  Long
-                </Card>
-                <Card
-                  className={`mx-1 ${styles.top}`}
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  Short
-                </Card>
-                <Card
-                  className={`mx-1 ${styles.top}`}
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  Spread
-                </Card>
-                <Card
-                  className={`mx-1 ${styles.top}`}
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  Long
-                </Card>
-                <Card
-                  className={`mx-1 ${styles.top}`}
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  Short
-                </Card>
-                <Card
-                  className={`mx-1 ${styles.top}`}
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  Spread
-                </Card>{" "}
-                <Card
-                  className={`mx-1 ${styles.top}`}
-                  style={{
-                    width: 100,
-                  }}
-                >
-                  %variance
-                </Card>
+                <div>
+                  <Card
+                    className={`mx-2 ${styles.top}`}
+                    style={{
+                      width: 200,
+                    }}
+                  >
+                    Companies
+                  </Card>
+                </div>
+                <div>
+                  <Card
+                    className={`mx-1 ${styles.top}`}
+                    style={{
+                      width: 100,
+                    }}
+                  >
+                    Long
+                  </Card>
+                </div>
+                <div>
+                  <Card
+                    className={`mx-1 ${styles.top}`}
+                    style={{
+                      width: 100,
+                    }}
+                  >
+                    Short
+                  </Card>
+                </div>
+                <div>
+                  <Card
+                    className={`mx-1 ${styles.top}`}
+                    style={{
+                      width: 100,
+                    }}
+                  >
+                    Spread
+                  </Card>
+                </div>
+                <div>
+                  <Card
+                    className={`mx-1 ${styles.top}`}
+                    style={{
+                      width: 100,
+                    }}
+                  >
+                    Long
+                  </Card>
+                </div>
+                <div>
+                  <Card
+                    className={`mx-1 ${styles.top}`}
+                    style={{
+                      width: 100,
+                    }}
+                  >
+                    Short
+                  </Card>
+                </div>
+                <div>
+                  <Card
+                    className={`mx-1 ${styles.top}`}
+                    style={{
+                      width: 100,
+                    }}
+                  >
+                    Spread
+                  </Card>
+                </div>
+
+                {data.avg !== "" && (
+                  <>
+                    {data.varianceArr.map((value, index) => {
+                      return (
+                        <div key={index}>
+                          <Card
+                            className={`mx-1 ${styles.top}`}
+                            style={{
+                              width: 100,
+                            }}
+                          >
+                            Week {index + 1}
+                          </Card>
+                        </div>
+                      );
+                    })}
+                    <div>
+                      <Card
+                        className={`mx-1 ${styles.top}`}
+                        style={{
+                          width: 100,
+                        }}
+                      >
+                        Average
+                      </Card>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="flex">
-                <Card className="mx-1">
-                  <TextField
-                    name="firm1"
-                    value={state.firm1}
-                    className={styles.textField}
-                    variant="outlined"
-                    onChange={onChange}
-                  />
-                </Card>
-                <Card className="mx-1">
-                  <TextField
-                    name="firm2"
-                    value={state.firm2}
-                    className={styles.textField}
-                    variant="outlined"
-                    onChange={onChange}
-                  />
-                </Card>
-                <Card className={`mx-1 ${styles.text1}`}>{data.long1}</Card>
-                <Card className={`mx-1 ${styles.text2}`}>{data.short1}</Card>
-                <Card className={`mx-1 ${styles.text3}`}>{data.spread1}</Card>
+                <div>
+                  <Card className="mx-1">
+                    <TextField
+                      name="firm1"
+                      value={state.firm1}
+                      className={styles.textField}
+                      variant="outlined"
+                      onChange={onChange}
+                    />
+                  </Card>
+                </div>
+                <div>
+                  <Card className="mx-1">
+                    <TextField
+                      name="firm2"
+                      value={state.firm2}
+                      className={styles.textField}
+                      variant="outlined"
+                      onChange={onChange}
+                    />
+                  </Card>
+                </div>
+                <div>
+                  <Card className={`mx-1 ${styles.text1}`}>{data.long1}</Card>
+                </div>
+                <div>
+                  <Card className={`mx-1 ${styles.text2}`}>{data.short1}</Card>
+                </div>
+                <div>
+                  <Card className={`mx-1 ${styles.text3}`}>{data.spread1}</Card>
+                </div>
+                <div>
+                  <Card className={`mx-1 ${styles.text1}`}>{data.long2}</Card>
+                </div>
+                <div>
+                  <Card className={`mx-1 ${styles.text2}`}>{data.short2}</Card>
+                </div>
+                <div>
+                  <Card className={`mx-1 ${styles.text3}`}>{data.spread2}</Card>
+                </div>
 
-                <Card className={`mx-1 ${styles.text1}`}>{data.long2}</Card>
-                <Card className={`mx-1 ${styles.text2}`}>{data.short2}</Card>
-                <Card className={`mx-1 ${styles.text3}`}>{data.spread2}</Card>
-
-                <Card className={`mx-1 ${styles.var}`}>
-                  {data.var1 !== "" && data.var1 + "%"}
-                </Card>
+                {data.avg !== "" && (
+                  <>
+                    {data.varianceArr.map((value, index) => {
+                      return (
+                        <div key={index}>
+                          <Card
+                            style={{ color: value < 0 ? "red" : "green" }}
+                            className={`mx-1 ${styles.text4}`}
+                          >
+                            {value}
+                          </Card>
+                        </div>
+                      );
+                    })}
+                    <div>
+                      <Card className={`mx-1 ${styles.avg}`}>{data.avg}</Card>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </>
