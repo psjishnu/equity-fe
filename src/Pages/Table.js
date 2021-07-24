@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 //import moment from "moment";
-import { Card, TextField } from "@material-ui/core";
+import {
+  Card,
+  TextField,
+  FormControl,
+  InputAdornment,
+  IconButton,
+  OutlinedInput,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 const baseURL = { url: process.env.REACT_APP_BASE_URL };
 const useStyles = makeStyles({
@@ -66,7 +73,7 @@ const useStyles = makeStyles({
     textAlign: "center",
   },
 });
-function Table() {
+function Table({ toastAlert }) {
   const styles = useStyles();
   const [data, setdata] = useState({
     long1: "",
@@ -78,45 +85,72 @@ function Table() {
     var1: "",
     avg: "",
     varianceArr: [],
+    sectorName: "",
   });
   //const [loading, setloading] = useState(false);
   //const [rerender, setrerender] = useState(false);
   const [state, setstate] = useState({ firm1: "", firm2: "" });
-
+  const [sectorName, setSectorName] = useState("");
+  const postData = (postObject, changeSector) => {
+    axios
+      .post(`${baseURL.url}/getdata`, { ...postObject, changeSector })
+      .then((res) => {
+        if (res && res.data) {
+          setdata(res.data);
+          const {
+            long1,
+            long2,
+            spread1,
+            spread2,
+            short1,
+            short2,
+            var1,
+            varianceArr,
+            avg,
+            sectorName,
+          } = res.data;
+          setSectorName(sectorName);
+          setdata({
+            long1,
+            long2,
+            spread1,
+            spread2,
+            short1,
+            short2,
+            var1,
+            varianceArr,
+            avg,
+          });
+        }
+      });
+  };
   const onChange = (e) => {
     const { name, value } = e.target;
     setstate({ ...state, [name]: value });
-    const query =
+    const postObject =
       name === "firm1"
-        ? `firm1=${value}&firm2=${state.firm2}`
-        : `firm1=${state.firm1}&firm2=${value}`;
-    axios.get(`${baseURL.url}/getdata?${query}`).then((res) => {
-      if (res && res.data) {
-        setdata(res.data);
-        const {
-          long1,
-          long2,
-          spread1,
-          spread2,
-          short1,
-          short2,
-          var1,
-          varianceArr,
-          avg,
-        } = res.data;
-        setdata({
-          long1,
-          long2,
-          spread1,
-          spread2,
-          short1,
-          short2,
-          var1,
-          varianceArr,
-          avg,
-        });
-      }
-    });
+        ? {
+            firm1: value || "__NULL__",
+            firm2: state.firm2 || "__NULL__",
+            sector: sectorName,
+          }
+        : name === "firm2"
+        ? {
+            firm1: state.firm1 || "__NULL__",
+            firm2: value || "__NULL__",
+            sector: sectorName,
+          }
+        : {
+            firm1: state.firm1 || "__NULL__",
+            firm2: state.firm2 || "__NULL__",
+            sector: sectorName,
+          };
+    let changeSector = false;
+    if (!(name === "firm1" || name === "firm2")) {
+      toastAlert();
+      changeSector = true;
+    }
+    postData(postObject, changeSector);
   };
 
   return (
@@ -125,16 +159,23 @@ function Table() {
         {0 ? (
           <>
             <Card style={{ maxWidth: "400px", margin: "0px auto" }}>
-              <img
-                alt="loader"
-                src="https://www.washingtonpost.com/graphics/2020/health/coronavirus-sars-cov-2-structure/coronavirus-big.gif?v=13"
-              ></img>
+              Loading
             </Card>
           </>
         ) : (
           <>
             <div className="w-full my-1 overflow-x-auto ">
               <div className="my-3 w-full flex">
+                <div>
+                  <Card
+                    className={`mx-2 ${styles.top}`}
+                    style={{
+                      width: 150,
+                    }}
+                  >
+                    Sector/Industry
+                  </Card>
+                </div>
                 <div>
                   <Card
                     className={`mx-2 ${styles.top}`}
@@ -236,6 +277,43 @@ function Table() {
                 )}
               </div>
               <div className="flex">
+                <div>
+                  <Card className="mx-1">
+                    <FormControl style={{ width: "150px" }} variant="outlined">
+                      <OutlinedInput
+                        id="outlined-adornment-password"
+                        value={sectorName}
+                        onChange={(e) => setSectorName(e.target.value)}
+                        name="sectorName"
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={(e) => onChange(e)}
+                              name="sector"
+                              edge="end"
+                              style={{
+                                backgroundColor: "lightgreen",
+                                outline: "none",
+                              }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="darkgreen"
+                                class="bi bi-check-circle-fill"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                              </svg>
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                  </Card>
+                </div>
                 <div>
                   <Card className="mx-1">
                     <TextField
