@@ -170,7 +170,7 @@ function Table({ toastAlert }) {
                   <Card
                     className={`mx-2 ${styles.top}`}
                     style={{
-                      width: 150,
+                      width: 140,
                     }}
                   >
                     Sector/Industry
