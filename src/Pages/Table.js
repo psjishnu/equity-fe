@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-//import moment from "moment";
 import {
   Card,
   TextField,
@@ -87,42 +86,41 @@ function Table({ toastAlert }) {
     varianceArr: [],
     sectorName: "",
   });
-  //const [loading, setloading] = useState(false);
-  //const [rerender, setrerender] = useState(false);
+
   const [state, setstate] = useState({ firm1: "", firm2: "" });
   const [sectorName, setSectorName] = useState("");
-  const postData = (postObject, changeSector) => {
-    axios
-      .post(`${baseURL.url}/getdata`, { ...postObject, changeSector })
-      .then((res) => {
-        if (res && res.data) {
-          setdata(res.data);
-          const {
-            long1,
-            long2,
-            spread1,
-            spread2,
-            short1,
-            short2,
-            var1,
-            varianceArr,
-            avg,
-            sectorName,
-          } = res.data;
-          setSectorName(sectorName);
-          setdata({
-            long1,
-            long2,
-            spread1,
-            spread2,
-            short1,
-            short2,
-            var1,
-            varianceArr,
-            avg,
-          });
-        }
+  const postData = async (postObject, changeSector) => {
+    const res = await axios.post(`${baseURL.url}/getdata`, {
+      ...postObject,
+      changeSector,
+    });
+    if (res && res.data) {
+      setdata(res.data);
+      const {
+        long1,
+        long2,
+        spread1,
+        spread2,
+        short1,
+        short2,
+        var1,
+        varianceArr,
+        avg,
+        sectorName,
+      } = res.data;
+      setSectorName(sectorName);
+      setdata({
+        long1,
+        long2,
+        spread1,
+        spread2,
+        short1,
+        short2,
+        var1,
+        varianceArr,
+        avg,
       });
+    }
   };
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -156,228 +154,218 @@ function Table({ toastAlert }) {
   return (
     <>
       <div className="w-full text-sm ">
-        {0 ? (
-          <>
-            <Card style={{ maxWidth: "400px", margin: "0px auto" }}>
-              Loading
-            </Card>
-          </>
-        ) : (
-          <>
-            <div className="w-full my-1 overflow-x-auto ">
-              <div className="my-3 w-full flex">
-                <div>
-                  <Card
-                    className={`mx-2 ${styles.top}`}
-                    style={{
-                      width: 140,
-                    }}
-                  >
-                    Sector/Industry
-                  </Card>
-                </div>
-                <div>
-                  <Card
-                    className={`mx-2 ${styles.top}`}
-                    style={{
-                      width: 200,
-                    }}
-                  >
-                    Companies
-                  </Card>
-                </div>
-                <div>
-                  <Card
-                    className={`mx-1 ${styles.top}`}
-                    style={{
-                      width: 100,
-                    }}
-                  >
-                    Long
-                  </Card>
-                </div>
-                <div>
-                  <Card
-                    className={`mx-1 ${styles.top}`}
-                    style={{
-                      width: 100,
-                    }}
-                  >
-                    Short
-                  </Card>
-                </div>
-                <div>
-                  <Card
-                    className={`mx-1 ${styles.top}`}
-                    style={{
-                      width: 100,
-                    }}
-                  >
-                    Spread
-                  </Card>
-                </div>
-                <div>
-                  <Card
-                    className={`mx-1 ${styles.top}`}
-                    style={{
-                      width: 100,
-                    }}
-                  >
-                    Long
-                  </Card>
-                </div>
-                <div>
-                  <Card
-                    className={`mx-1 ${styles.top}`}
-                    style={{
-                      width: 100,
-                    }}
-                  >
-                    Short
-                  </Card>
-                </div>
-                <div>
-                  <Card
-                    className={`mx-1 ${styles.top}`}
-                    style={{
-                      width: 100,
-                    }}
-                  >
-                    Spread
-                  </Card>
-                </div>
+        <div className="w-full my-1 overflow-x-auto ">
+          <div className="my-3 w-full flex">
+            <div>
+              <Card
+                className={`mx-2 ${styles.top}`}
+                style={{
+                  width: 140,
+                }}
+              >
+                Sector/Industry
+              </Card>
+            </div>
+            <div>
+              <Card
+                className={`mx-2 ${styles.top}`}
+                style={{
+                  width: 200,
+                }}
+              >
+                Companies
+              </Card>
+            </div>
+            <div>
+              <Card
+                className={`mx-1 ${styles.top}`}
+                style={{
+                  width: 100,
+                }}
+              >
+                Long
+              </Card>
+            </div>
+            <div>
+              <Card
+                className={`mx-1 ${styles.top}`}
+                style={{
+                  width: 100,
+                }}
+              >
+                Short
+              </Card>
+            </div>
+            <div>
+              <Card
+                className={`mx-1 ${styles.top}`}
+                style={{
+                  width: 100,
+                }}
+              >
+                Spread
+              </Card>
+            </div>
+            <div>
+              <Card
+                className={`mx-1 ${styles.top}`}
+                style={{
+                  width: 100,
+                }}
+              >
+                Long
+              </Card>
+            </div>
+            <div>
+              <Card
+                className={`mx-1 ${styles.top}`}
+                style={{
+                  width: 100,
+                }}
+              >
+                Short
+              </Card>
+            </div>
+            <div>
+              <Card
+                className={`mx-1 ${styles.top}`}
+                style={{
+                  width: 100,
+                }}
+              >
+                Spread
+              </Card>
+            </div>
 
-                {data.avg !== "" && (
-                  <>
-                    {data.varianceArr.map((value, index) => {
-                      return (
-                        <div key={index}>
-                          <Card
-                            className={`mx-1 ${styles.top}`}
-                            style={{
-                              width: 100,
-                            }}
-                          >
-                            Week {index + 1}
-                          </Card>
-                        </div>
-                      );
-                    })}
-                    <div>
+            {data.avg !== "" && (
+              <>
+                {data.varianceArr.map((value, index) => {
+                  return (
+                    <div key={index}>
                       <Card
                         className={`mx-1 ${styles.top}`}
                         style={{
                           width: 100,
                         }}
                       >
-                        Average
+                        Week {index + 1}
                       </Card>
                     </div>
-                  </>
-                )}
-              </div>
-              <div className="flex">
+                  );
+                })}
                 <div>
-                  <Card className="mx-1">
-                    <FormControl style={{ width: "150px" }} variant="outlined">
-                      <OutlinedInput
-                        id="outlined-adornment-password"
-                        value={sectorName}
-                        onChange={(e) => setSectorName(e.target.value)}
-                        name="sectorName"
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={(e) => onChange(e)}
-                              name="sector"
-                              edge="end"
-                              style={{
-                                backgroundColor: "lightgreen",
-                                outline: "none",
-                              }}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="darkgreen"
-                                class="bi bi-check-circle-fill"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                              </svg>
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                      />
-                    </FormControl>
+                  <Card
+                    className={`mx-1 ${styles.top}`}
+                    style={{
+                      width: 100,
+                    }}
+                  >
+                    Average
                   </Card>
                 </div>
-                <div>
-                  <Card className="mx-1">
-                    <TextField
-                      name="firm1"
-                      value={state.firm1}
-                      className={styles.textField}
-                      variant="outlined"
-                      onChange={onChange}
-                    />
-                  </Card>
-                </div>
-                <div>
-                  <Card className="mx-1">
-                    <TextField
-                      name="firm2"
-                      value={state.firm2}
-                      className={styles.textField}
-                      variant="outlined"
-                      onChange={onChange}
-                    />
-                  </Card>
-                </div>
-                <div>
-                  <Card className={`mx-1 ${styles.text1}`}>{data.long1}</Card>
-                </div>
-                <div>
-                  <Card className={`mx-1 ${styles.text2}`}>{data.short1}</Card>
-                </div>
-                <div>
-                  <Card className={`mx-1 ${styles.text3}`}>{data.spread1}</Card>
-                </div>
-                <div>
-                  <Card className={`mx-1 ${styles.text1}`}>{data.long2}</Card>
-                </div>
-                <div>
-                  <Card className={`mx-1 ${styles.text2}`}>{data.short2}</Card>
-                </div>
-                <div>
-                  <Card className={`mx-1 ${styles.text3}`}>{data.spread2}</Card>
-                </div>
-
-                {data.avg !== "" && (
-                  <>
-                    {data.varianceArr.map((value, index) => {
-                      return (
-                        <div key={index}>
-                          <Card
-                            style={{ color: value < 0 ? "red" : "green" }}
-                            className={`mx-1 ${styles.text4}`}
+              </>
+            )}
+          </div>
+          <div className="flex">
+            <div>
+              <Card className="mx-1">
+                <FormControl style={{ width: "150px" }} variant="outlined">
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    value={sectorName}
+                    onChange={(e) => setSectorName(e.target.value)}
+                    name="sectorName"
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={(e) => onChange(e)}
+                          name="sector"
+                          edge="end"
+                          style={{
+                            backgroundColor: "lightgreen",
+                            outline: "none",
+                          }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="darkgreen"
+                            class="bi bi-check-circle-fill"
+                            viewBox="0 0 16 16"
                           >
-                            {value}
-                          </Card>
-                        </div>
-                      );
-                    })}
-                    <div>
-                      <Card className={`mx-1 ${styles.avg}`}>{data.avg}</Card>
-                    </div>
-                  </>
-                )}
-              </div>
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                          </svg>
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </Card>
             </div>
-          </>
-        )}
+            <div>
+              <Card className="mx-1">
+                <TextField
+                  name="firm1"
+                  value={state.firm1}
+                  className={styles.textField}
+                  variant="outlined"
+                  onChange={onChange}
+                />
+              </Card>
+            </div>
+            <div>
+              <Card className="mx-1">
+                <TextField
+                  name="firm2"
+                  value={state.firm2}
+                  className={styles.textField}
+                  variant="outlined"
+                  onChange={onChange}
+                />
+              </Card>
+            </div>
+            <div>
+              <Card className={`mx-1 ${styles.text1}`}>{data.long1}</Card>
+            </div>
+            <div>
+              <Card className={`mx-1 ${styles.text2}`}>{data.short1}</Card>
+            </div>
+            <div>
+              <Card className={`mx-1 ${styles.text3}`}>{data.spread1}</Card>
+            </div>
+            <div>
+              <Card className={`mx-1 ${styles.text1}`}>{data.long2}</Card>
+            </div>
+            <div>
+              <Card className={`mx-1 ${styles.text2}`}>{data.short2}</Card>
+            </div>
+            <div>
+              <Card className={`mx-1 ${styles.text3}`}>{data.spread2}</Card>
+            </div>
+
+            {data.avg !== "" && (
+              <>
+                {data.varianceArr.map((value, index) => {
+                  return (
+                    <div key={index}>
+                      <Card
+                        style={{ color: value < 0 ? "red" : "green" }}
+                        className={`mx-1 ${styles.text4}`}
+                      >
+                        {value}
+                      </Card>
+                    </div>
+                  );
+                })}
+                <div>
+                  <Card className={`mx-1 ${styles.avg}`}>{data.avg}</Card>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );
