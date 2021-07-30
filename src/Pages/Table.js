@@ -95,7 +95,6 @@ function Table({ toastAlert }) {
       changeSector,
     });
     if (res && res.data) {
-      setdata(res.data);
       const {
         long1,
         long2,
